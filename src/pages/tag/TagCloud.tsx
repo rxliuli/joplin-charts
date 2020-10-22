@@ -4,6 +4,7 @@ import * as am4core from '@amcharts/amcharts4/core'
 import { WordCloud, WordCloudSeries } from '@amcharts/amcharts4/plugins/wordCloud'
 import { tagCloudApi, TagModel } from './api/TagCloudApi'
 import { useMount } from 'react-use'
+import { useSnackbar } from 'notistack'
 
 type PropsType = {}
 
@@ -43,8 +44,15 @@ const TagCloud: React.FC<PropsType> = () => {
     }
   }, [tagCountList])
 
+  const snackbar = useSnackbar()
   useMount(async () => {
-    setTagCountList(await tagCloudApi.countList())
+    try {
+      setTagCountList(await tagCloudApi.countList())
+      snackbar.enqueueSnackbar('Successfully loaded the joplin tag list')
+    } catch (e) {
+      console.error(e)
+      snackbar.enqueueSnackbar('Failed to load joplin tag list')
+    }
   })
 
   return (

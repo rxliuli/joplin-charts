@@ -1,20 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import * as serviceWorker from './serviceWorker'
-import { renderRoutes } from 'react-router-config'
-import { routeList } from './component/router/routeList'
-import { HashRouter } from 'react-router-dom'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themes_animated from '@amcharts/amcharts4/themes/animated'
+import App from './App'
+import 'normalize.css'
 
 am4core.useTheme(am4themes_animated)
 
 ReactDOM.render(
-  <React.StrictMode>
-    <HashRouter>
-      {renderRoutes(routeList)}
-    </HashRouter>
-  </React.StrictMode>,
+  <App />,
   document.getElementById('root'),
 )
 
