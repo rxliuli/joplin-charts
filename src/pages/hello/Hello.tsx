@@ -1,25 +1,30 @@
+import Graphin, { Utils } from '@antv/graphin/dist'
 import * as React from 'react'
-import { defineMessages } from 'react-intl'
-import { useMount } from 'react-use'
-
-
-defineMessages({
-  foo: {
-    id: 'foo',
-    defaultMessage: 'foo',
-    description: 'bar',
-  },
-})
+import '@antv/graphin/dist/index.css'
 
 type PropsType = {}
 
+const data = Utils.mock(20).random().graphin()
+
+console.log('data: ', data)
+
 const Hello: React.FC<PropsType> = () => {
-  useMount(() => {
-
-  })
-  return <div>
-
-  </div>
+  return (
+    <div
+      style={{
+        overflow: 'hidden',
+        height: '100vh',
+      }}
+    >
+      <Graphin
+        data={data}
+        layout={{ name: 'force' }}
+        options={{
+          height: window.document.documentElement.clientHeight,
+        }}
+      />
+    </div>
+  )
 }
 
 export default Hello

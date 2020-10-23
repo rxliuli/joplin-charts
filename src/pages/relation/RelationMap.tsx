@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useMount } from 'react-use'
+import { useLocalStorage, useMount } from 'react-use'
 import { config, noteApi } from 'joplin-api'
 import * as am4core from '@amcharts/amcharts4/core'
 import {
@@ -11,6 +11,7 @@ import {
   Note,
   NoteRelationConvertUtil,
 } from './__tests__/noteRelationConvertUtil'
+import { SettingForm } from '../setting'
 
 type PropsType = {}
 
@@ -63,9 +64,11 @@ const RelationMap: React.FC<PropsType> = () => {
     networkSeries.data = relationNoteList
   }, [relationNoteList])
 
+  const [settingForm] = useLocalStorage<SettingForm>('settingForm')
+
   useMount(async () => {
-    config.token =
-      ''
+    config.token = settingForm!.token
+    config.port = settingForm!.port
     const noteList = await noteApi.list(['id', 'title', 'body'])
     setRelationNoteList(NoteRelationConvertUtil.convert(noteList))
   })
