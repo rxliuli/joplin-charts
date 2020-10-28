@@ -4,6 +4,7 @@ import Hello from '../../pages/hello'
 import RelationMap from '../../pages/relation'
 import JoplinSetting from '../../pages/setting'
 import Home from '../../pages/home'
+import CreateNoteDemo from '../../pages/demo'
 
 export const routeList: RouteConfig[] = [
   {
@@ -21,6 +22,10 @@ export const routeList: RouteConfig[] = [
   {
     path: '/relation',
     component: RelationMap,
+  },
+  {
+    path: '/demo/create-note',
+    component: CreateNoteDemo,
   },
   {
     path: '/',
