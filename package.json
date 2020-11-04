@@ -5,7 +5,8 @@
   "homepage": ".",
   "dependencies": {
     "@amcharts/amcharts4": "^4.10.8",
-    "@antv/graphin": "^1.4.5",
+    "@antv/g2plot": "^2.0.6",
+    "@antv/graphin": "^1.5.0",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@testing-library/jest-dom": "^4.2.4",
@@ -17,6 +18,9 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-router": "^5.1.8",
     "@types/react-router-dom": "^5.1.6",
+    "echarts": "^4.9.0",
+    "echarts-for-react": "^2.0.16",
+    "immer": "^7.0.14",
     "joplin-api": "^0.1.12",
     "markdown-it": "^12.0.1",
     "normalize.css": "^8.0.1",
@@ -44,20 +48,14 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
+  "browserslist": [
+    "last 1 chrome version",
+    "last 1 firefox version",
+    "last 1 safari version"
+  ],
   "devDependencies": {
     "@formatjs/cli": "^2.13.2",
+    "@types/echarts": "^4.9.0",
     "@types/markdown-it": "^10.0.2",
     "@types/react-router-config": "^5.0.1",
     "eslint-plugin-formatjs": "^2.7.15",

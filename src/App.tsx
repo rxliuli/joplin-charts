@@ -1,14 +1,18 @@
 import * as React from 'react'
-import { HashRouter, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { renderRoutes } from 'react-router-config'
 import { routeList } from './component/router/routeList'
-import { SnackbarProvider } from 'notistack'
-import { IntlProvider } from 'react-intl'
 import { useLocalStorage, useMount } from 'react-use'
 import { SettingForm } from './pages/setting'
 import { config } from 'joplin-api'
+import { proxyStorage } from './common/util/proxyStorage'
 
 type PropsType = {}
+
+//初始化 storage
+const storage = proxyStorage<{ settingForm: SettingForm }>(localStorage)
+config.token = storage.settingForm?.token!
+config.port = storage.settingForm?.port!
 
 const App: React.FC<PropsType> = () => {
   const [settingForm] = useLocalStorage<SettingForm>('settingForm')
@@ -18,19 +22,8 @@ const App: React.FC<PropsType> = () => {
       history.push('/setting')
       return
     }
-
-    config.token = settingForm!.token
-    config.port = settingForm!.port
   })
-  return (
-    <React.StrictMode>
-      <IntlProvider locale={window.navigator.language}>
-        <SnackbarProvider maxSnack={3}>
-          <HashRouter>{renderRoutes(routeList)}</HashRouter>
-        </SnackbarProvider>
-      </IntlProvider>
-    </React.StrictMode>
-  )
+  return renderRoutes(routeList)
 }
 
 export default App

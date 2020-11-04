@@ -3,7 +3,7 @@ import { NoteGetRes } from 'joplin-api/dist/modal/NoteGetRes'
 import { NoteProperties } from 'joplin-api/dist/modal/NoteProperties'
 
 export type Note = Pick<NoteGetRes, 'id' | 'title'> & {
-  links: string[]
+  links: Pick<NoteGetRes, 'id' | 'title'>[]
 }
 
 type RelationNote = Pick<NoteProperties, 'id' | 'title' | 'body'>
@@ -11,9 +11,12 @@ type RelationNote = Pick<NoteProperties, 'id' | 'title' | 'body'>
 export class NoteRelationConvertUtil {
   static convert(noteList: RelationNote[]): Note[] {
     const md = new MarkdownIt()
-    const noteIdSet = new Set(noteList.map((note) => note.id))
+    const noteIdMap = noteList.reduce((res, note) => {
+      res.set(note.id, note)
+      return res
+    }, new Map<string, RelationNote>())
 
-    function findRelationByNote(note: RelationNote): string[] {
+    function findRelationByNote(note: RelationNote) {
       const tokenList = md.parseInline(note.body, '')
       return tokenList[0]
         .children!.filter((token) => {
@@ -26,8 +29,12 @@ export class NoteRelationConvertUtil {
           return token.attrGet('href')?.substr(2)!
         })
         .filter((id) => {
-          return noteIdSet.has(id)
+          return noteIdMap.has(id)
         })
+        .map((id) => ({
+          id,
+          title: noteIdMap.get(id)!.title,
+        }))
     }
 
     return noteList.map(

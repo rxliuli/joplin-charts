@@ -1,85 +1,95 @@
 import * as React from 'react'
-import { useLocalStorage, useMount } from 'react-use'
-import { config, noteApi } from 'joplin-api'
-import * as am4core from '@amcharts/amcharts4/core'
-import {
-  ForceDirectedSeries,
-  ForceDirectedTree,
-} from '@amcharts/amcharts4/plugins/forceDirected'
-import { useEffect, useState } from 'react'
-import {
-  Note,
-  NoteRelationConvertUtil,
-} from './__tests__/noteRelationConvertUtil'
-import { SettingForm } from '../setting'
+import { useMount } from 'react-use'
+import { noteApi } from 'joplin-api'
+import { NoteRelationConvertUtil } from './util/NoteRelationConvertUtil'
+import Graphin, { Data, Edge, Node } from '@antv/graphin'
+import '@antv/graphin/dist/index.css'
+import { useState } from 'react'
+import { useSnackbar } from 'notistack'
+import { useHistory } from 'react-router'
 
 type PropsType = {}
+
+async function getData() {
+  const noteList = await noteApi.list(['id', 'title', 'body'])
+  const noteLinks = NoteRelationConvertUtil.convert(noteList)
+  const data: Data = {
+    nodes: noteLinks.map((note) => {
+      const data = {
+        id: note.id,
+        label: note.title.startsWith('#')
+          ? note.title.replace('# ', '')
+          : note.title,
+      }
+      return {
+        data,
+        ...data,
+        shape: 'CircleNode',
+        style: {
+          nodeSize: 24 * (1 + note.links.length),
+        },
+      } as Node
+    }),
+    edges: noteLinks.flatMap((note) =>
+      note.links.map((link) => {
+        const data = {
+          source: note.id,
+          target: link.id,
+        }
+        return {
+          data,
+          ...data,
+        } as Edge
+      }),
+    ),
+  }
+  return data
+}
 
 /**
  * 笔记关系图
  */
 const RelationMap: React.FC<PropsType> = () => {
-  const [relationNoteList, setRelationNoteList] = useState<Note[]>([])
+  const [graphData, setGraphData] = useState<Data>({ edges: [], nodes: [] })
 
-  useEffect(() => {
-    const chart = am4core.create('chartdiv', ForceDirectedTree)
-
-    const networkSeries = chart.series.push(new ForceDirectedSeries())
-    networkSeries.dataFields.linkWith = 'links'
-    networkSeries.dataFields.name = 'title'
-    networkSeries.dataFields.id = 'id'
-    networkSeries.dataFields.value = 'id'
-    networkSeries.dataFields.children = 'children'
-
-    networkSeries.nodes.template.label.text = '{name}'
-    networkSeries.fontSize = 8
-    networkSeries.linkWithStrength = 0
-
-    const nodeTemplate = networkSeries.nodes.template
-    nodeTemplate.tooltipText = '{name}'
-    nodeTemplate.fillOpacity = 1
-    nodeTemplate.label.hideOversized = true
-    nodeTemplate.label.truncate = true
-
-    const linkTemplate = networkSeries.links.template
-    linkTemplate.strokeWidth = 1
-    const linkHoverState = linkTemplate.states.create('hover')
-    linkHoverState.properties.strokeOpacity = 1
-    linkHoverState.properties.strokeWidth = 2
-
-    nodeTemplate.events.on('over', function (event) {
-      const dataItem = event.target.dataItem
-      dataItem.childLinks.each(function (link) {
-        link.isHover = true
-      })
-    })
-
-    nodeTemplate.events.on('out', function (event) {
-      const dataItem = event.target.dataItem
-      dataItem.childLinks.each(function (link) {
-        link.isHover = false
-      })
-    })
-
-    networkSeries.data = relationNoteList
-  }, [relationNoteList])
-
-  const [settingForm] = useLocalStorage<SettingForm>('settingForm')
-
+  const snackbar = useSnackbar()
+  const history = useHistory()
   useMount(async () => {
-    config.token = settingForm!.token
-    config.port = settingForm!.port
-    const noteList = await noteApi.list(['id', 'title', 'body'])
-    setRelationNoteList(NoteRelationConvertUtil.convert(noteList))
+    try {
+      const data = await getData()
+      setGraphData(data)
+      snackbar.enqueueSnackbar('加载笔记关系图成功', {
+        autoHideDuration: 3000,
+      })
+    } catch (e) {
+      snackbar.enqueueSnackbar('加载笔记关系图失败', {
+        autoHideDuration: 3000,
+      })
+      history.push('/setting')
+    }
   })
   return (
-    <div
-      id="chartdiv"
-      style={{
-        width: '100%',
-        height: '100vh',
-      }}
-    />
+    <div style={{ height: '100vh' }}>
+      <Graphin
+        data={graphData}
+        layout={{
+          name: 'force',
+          options: {
+            preset: { name: 'concentric' },
+            centripetalOptions: {
+              single: 100, // 给孤立节点设置原来 （100/2）倍的向心力
+              center: () => {
+                // 根据不同的节点与度数设置不同的向心力的中心点
+                return {
+                  x: 100,
+                  y: 100,
+                }
+              },
+            },
+          },
+        }}
+      />
+    </div>
   )
 }
 

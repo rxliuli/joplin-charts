@@ -5,11 +5,22 @@ import * as am4core from '@amcharts/amcharts4/core'
 import am4themes_animated from '@amcharts/amcharts4/themes/animated'
 import App from './App'
 import 'normalize.css'
+import { IntlProvider } from 'react-intl'
+import { SnackbarProvider } from 'notistack'
+import { HashRouter } from 'react-router-dom'
 
 am4core.useTheme(am4themes_animated)
 
 ReactDOM.render(
-  <App />,
+  <React.StrictMode>
+    <IntlProvider locale={window.navigator.language}>
+      <SnackbarProvider maxSnack={3}>
+        <HashRouter>
+          <App />
+        </HashRouter>
+      </SnackbarProvider>
+    </IntlProvider>
+  </React.StrictMode>,
   document.getElementById('root'),
 )
 

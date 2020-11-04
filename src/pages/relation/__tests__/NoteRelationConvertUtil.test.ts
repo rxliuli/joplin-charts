@@ -1,5 +1,5 @@
 import { config, noteApi } from 'joplin-api'
-import { NoteRelationConvertUtil } from './noteRelationConvertUtil'
+import { NoteRelationConvertUtil } from '../util/NoteRelationConvertUtil'
 
 describe('测试将笔记转换为可用信息', () => {
   config.token =
