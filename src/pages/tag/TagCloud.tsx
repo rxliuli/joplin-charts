@@ -1,17 +1,40 @@
 import * as React from 'react'
 import { tagCloudApi } from './api/TagCloudApi'
 import { useMount } from 'react-use'
-import { useSnackbar } from 'notistack'
 import { WordCloud } from '@antv/g2plot'
+import i18next, { InitOptions } from 'i18next'
+import { useMessage } from '../../common/hooks/useMessage'
 
 type PropsType = {}
+
+type LocaleKeys = 'successMsg' | 'errorMsg'
+
+const i18nOptions: InitOptions = {
+  lng: navigator.language,
+  fallbackLng: 'en',
+  resources: {
+    en: {
+      translation: {
+        successMsg: 'Successfully loaded the joplin tag list',
+        errorMsg: 'Failed to load joplin tag list',
+      } as Record<LocaleKeys, string>,
+    },
+    'zh-CN': {
+      translation: {
+        successMsg: 'Joplin 标签列表加载成功',
+        errorMsg: 'Joplin 标签列表加载失败',
+      } as Record<LocaleKeys, string>,
+    },
+  },
+}
 
 /**
  * 标签云
  */
 const TagCloud: React.FC<PropsType> = () => {
-  const snackbar = useSnackbar()
+  const { success, error } = useMessage()
   useMount(async () => {
+    await i18next.init(i18nOptions)
     try {
       const tagCountList = await tagCloudApi.countList()
       const wordCloud = new WordCloud('container', {
@@ -22,16 +45,10 @@ const TagCloud: React.FC<PropsType> = () => {
         random: () => 0.5,
       })
       wordCloud.render()
-      snackbar.enqueueSnackbar('Successfully loaded the joplin tag list', {
-        variant: 'success',
-        autoHideDuration: 3000,
-      })
+      success(i18next.t<string, LocaleKeys>('successMsg'))
     } catch (e) {
       console.error(e)
-      snackbar.enqueueSnackbar('Failed to load joplin tag list', {
-        variant: 'error',
-        autoHideDuration: 3000,
-      })
+      error(i18next.t<string, LocaleKeys>('errorMsg'))
     }
   })
 

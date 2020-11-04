@@ -7,8 +7,31 @@ import '@antv/graphin/dist/index.css'
 import { useState } from 'react'
 import { useSnackbar } from 'notistack'
 import { useHistory } from 'react-router'
+import i18next, { InitOptions } from 'i18next'
+import { useMessage } from '../../common/hooks/useMessage'
 
 type PropsType = {}
+
+type LocaleKeys = 'successMsg' | 'errorMsg'
+
+const i18nOptions: InitOptions = {
+  lng: navigator.language,
+  fallbackLng: 'en',
+  resources: {
+    en: {
+      translation: {
+        successMsg: 'Succeeded in loading note diagram',
+        errorMsg: 'Failed to load note diagram',
+      } as Record<LocaleKeys, string>,
+    },
+    'zh-CN': {
+      translation: {
+        successMsg: '加载笔记关系图成功',
+        errorMsg: '加载笔记关系图失败',
+      } as Record<LocaleKeys, string>,
+    },
+  },
+}
 
 async function getData() {
   const noteList = await noteApi.list(['id', 'title', 'body'])
@@ -52,19 +75,16 @@ async function getData() {
 const RelationMap: React.FC<PropsType> = () => {
   const [graphData, setGraphData] = useState<Data>({ edges: [], nodes: [] })
 
-  const snackbar = useSnackbar()
+  const { success, error } = useMessage()
   const history = useHistory()
   useMount(async () => {
+    await i18next.init(i18nOptions)
     try {
       const data = await getData()
       setGraphData(data)
-      snackbar.enqueueSnackbar('加载笔记关系图成功', {
-        autoHideDuration: 3000,
-      })
+      success(i18next.t<string, LocaleKeys>('successMsg'))
     } catch (e) {
-      snackbar.enqueueSnackbar('加载笔记关系图失败', {
-        autoHideDuration: 3000,
-      })
+      error(i18next.t<string, LocaleKeys>('errorMsg'))
       history.push('/setting')
     }
   })
