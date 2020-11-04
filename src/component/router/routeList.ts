@@ -1,10 +1,10 @@
 import { RouteConfig } from 'react-router-config'
 import TagCloud from '../../pages/tag'
-import Hello from '../../pages/hello'
 import RelationMap from '../../pages/relation'
 import JoplinSetting from '../../pages/setting'
 import Home from '../../pages/home'
 import CreateNoteDemo from '../../pages/demo'
+import NotebookSunburst from '../../pages/sunburst'
 
 export const routeList: RouteConfig[] = [
   {
@@ -16,8 +16,8 @@ export const routeList: RouteConfig[] = [
     component: TagCloud,
   },
   {
-    path: '/hello',
-    component: Hello,
+    path: '/sunburst',
+    component: NotebookSunburst,
   },
   {
     path: '/relation',

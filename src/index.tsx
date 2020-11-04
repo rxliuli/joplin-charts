@@ -1,15 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import * as serviceWorker from './serviceWorker'
-import * as am4core from '@amcharts/amcharts4/core'
-import am4themes_animated from '@amcharts/amcharts4/themes/animated'
 import App from './App'
 import 'normalize.css'
 import { IntlProvider } from 'react-intl'
 import { SnackbarProvider } from 'notistack'
 import { HashRouter } from 'react-router-dom'
-
-am4core.useTheme(am4themes_animated)
+import '@antv/graphin/dist/index.css'
 
 ReactDOM.render(
   <React.StrictMode>
