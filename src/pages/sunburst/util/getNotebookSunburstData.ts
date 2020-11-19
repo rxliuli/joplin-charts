@@ -1,5 +1,5 @@
 import { folderApi } from 'joplin-api'
-import { FolderListRes } from 'joplin-api/dist/modal/FolderListRes'
+import { FolderListAllRes } from 'joplin-api/dist/modal/FolderListAllRes'
 
 export type SunburstData = {
   label: string
@@ -8,9 +8,9 @@ export type SunburstData = {
 }
 
 export async function getNotebookSunburstData() {
-  const folderList = await folderApi.list()
+  const folderList = await folderApi.listAll()
 
-  function convert(folder: FolderListRes): SunburstData {
+  function convert(folder: FolderListAllRes): SunburstData {
     return {
       label: folder.title,
       sum: folder.note_count,

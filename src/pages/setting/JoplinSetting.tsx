@@ -81,7 +81,10 @@ const JoplinSetting: React.FC<PropsType> = () => {
     try {
       config.token = data.token
       config.port = data.port
-      await noteApi.list(['id'])
+      await noteApi.list({
+        fields: [],
+        limit: 1,
+      })
       setSettingForm(config)
       success(i18next.t<string, LocaleKeys>('successMsg'))
       history.push('/')

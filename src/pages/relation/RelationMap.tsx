@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useMount } from 'react-use'
-import { noteApi } from 'joplin-api'
+import { noteApi, PageUtil } from 'joplin-api'
 import { NoteRelationConvertUtil } from './util/NoteRelationConvertUtil'
 import Graphin, { Data, Edge, Node } from '@antv/graphin'
 import '@antv/graphin/dist/index.css'
@@ -33,7 +33,10 @@ const i18nOptions: InitOptions = {
 }
 
 async function getData() {
-  const noteList = await noteApi.list(['id', 'title', 'body'])
+  const noteList = await PageUtil.pageToAllList(noteApi.list, {
+    fields: ['id', 'title', 'body'],
+  })
+  console.log('noteList: ', noteList)
   const noteLinks = NoteRelationConvertUtil.convert(noteList)
   const data: Data = {
     nodes: noteLinks.map((note) => {

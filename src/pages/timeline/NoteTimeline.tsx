@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useAsync, useMount } from 'react-use'
-import { actionApi, noteApi } from 'joplin-api'
+import { noteActionApi, noteApi, PageUtil } from 'joplin-api'
 import Timeline from '@material-ui/lab/Timeline'
 import TimelineItem from '@material-ui/lab/TimelineItem'
 import TimelineSeparator from '@material-ui/lab/TimelineSeparator'
@@ -44,14 +44,11 @@ const i18nOptions: InitOptions = {
  */
 const NoteTimeline: React.FC<NoteTimelineProps> = () => {
   const noteListState = useAsync(async () => {
-    const noteList = await noteApi.list([
-      'id',
-      'title',
-      'body',
-      'user_updated_time',
-    ])
-    noteList.sort((a, b) => b.user_updated_time - a.user_updated_time)
-    return noteList
+    return await PageUtil.pageToAllList(noteApi.list, {
+      fields: ['id', 'title', 'body', 'user_updated_time'],
+      order_by: 'user_updated_time',
+      order_dir: 'DESC',
+    })
   }, [])
 
   useMount(async () => {
@@ -59,7 +56,7 @@ const NoteTimeline: React.FC<NoteTimelineProps> = () => {
   })
 
   async function onOpenEditor(id: string) {
-    await actionApi.openAndWatch(id)
+    await noteActionApi.openAndWatch(id)
   }
 
   return (

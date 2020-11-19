@@ -8,7 +8,7 @@ type PropsType = {}
 const CreateNoteDemo: React.FC<PropsType> = () => {
   const snackbar = useSnackbar()
   useMount(async () => {
-    const folderList = await folderApi.list()
+    const folderList = await folderApi.listAll()
     const folder = folderList[0]
     const res = await noteApi.create({
       title: 'test title',
