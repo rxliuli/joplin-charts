@@ -1,1 +1,0 @@
-{"version":3,"sources":["JoplinSetting.module.css","Home.module.css"],"names":[],"mappings":"AAAA,gCACI,YACJ,CCFA,kBACI,YAAa,CACb,sBAAuB,CACvB,kBACJ","file":"main.be3ca8f0.chunk.css","sourcesContent":[".container {\r\n    height: 100vh;\r\n}\r\n",".root {\r\n    display: flex;\r\n    justify-content: center;\r\n    align-items: center;\r\n}\r\n\r\n"]}
