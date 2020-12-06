@@ -36,7 +36,6 @@ async function getData() {
   const noteList = await PageUtil.pageToAllList(noteApi.list, {
     fields: ['id', 'title', 'body'],
   })
-  console.log('noteList: ', noteList)
   const noteLinks = NoteRelationConvertUtil.convert(noteList)
   const data: Data = {
     nodes: noteLinks.map((note) => {
@@ -51,7 +50,7 @@ async function getData() {
         ...data,
         shape: 'CircleNode',
         style: {
-          nodeSize: 24 * (1 + note.links.length),
+          nodeSize: 24 * Math.min(1 + note.links.length, 5),
         },
       } as Node
     }),
@@ -98,6 +97,7 @@ const RelationMap: React.FC<PropsType> = () => {
           name: 'force',
           options: {
             preset: { name: 'concentric' },
+            preventOverlap: true,
             centripetalOptions: {
               single: 100, // 给孤立节点设置原来 （100/2）倍的向心力
               center: () => {

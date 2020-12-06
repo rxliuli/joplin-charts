@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core'
 import * as React from 'react'
 import css from './JoplinSetting.module.css'
-import { useForm, ValidationRules } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { config, noteApi } from 'joplin-api'
 import { useAsync, useLocalStorage } from 'react-use'
 import { useHistory } from 'react-router'
@@ -130,7 +130,7 @@ const JoplinSetting: React.FC<PropsType> = () => {
                     required: i18next.t<string, LocaleKeys>(
                       'portErrorRequiredMsg',
                     ),
-                  } as ValidationRules)}
+                  })}
                   helperText={!!errors.port ? errors.port.message : ' '}
                 />
                 <Button
